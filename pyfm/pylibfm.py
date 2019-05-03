@@ -209,6 +209,7 @@ class FM:
 
         return self.fm_fast.fit(X_train_dataset, validation_dataset)
 
+        print('test')
         # report epoch information
         if self.verbose == True:
             print("-- Epoch %d" % (epoch + 1))
