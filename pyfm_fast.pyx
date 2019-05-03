@@ -353,6 +353,9 @@ cdef class FM_fast(object):
         else:
             grad_loss = validation_y * ( (1.0 / (1.0 + exp(-validation_y*p))) - 1.0)
 
+        if self.verbose > 0:
+            self.valloss += _squared_loss(p,validation_y) if self.task == REGRESSION else _log_loss(p,validation_y)
+        
         if self.k1 > 0:
             lambda_w_grad = 0.0
             for i in xrange(validation_xnnz):
@@ -411,6 +414,7 @@ cdef class FM_fast(object):
                 print("-- Epoch %d" % (epoch + 1))
             self.count = 0
             self.sumloss = 0
+            self.valloss = 0
             if self.shuffle_training:
                 dataset.shuffle(self.seed)
 
@@ -428,7 +432,7 @@ cdef class FM_fast(object):
                                           validation_xnnz, validation_y)
             if self.verbose > 0:
                 error_type = "MSE" if self.task == REGRESSION else "log loss"
-                print "Training %s: %.5f" % (error_type, (self.sumloss / self.count))
+                print "Training %s: %.5f, validation %s: %.5f" % (error_type, (self.sumloss / self.count), error_type, (self.valloss / self.count))
 
     def __getstate__(self):
         # Implements Pickle interface.
