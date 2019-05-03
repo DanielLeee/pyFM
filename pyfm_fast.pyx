@@ -85,6 +85,7 @@ cdef class FM_fast(object):
     cdef public np.ndarray grad_v
 
     cdef public DOUBLE sumloss
+    cdef public DOUBLE valloss
     cdef public int count
 
     def __init__(self,
@@ -135,6 +136,7 @@ cdef class FM_fast(object):
         self.reg_v = np.zeros(self.num_factors)
 
         self.sumloss = 0.0
+        self.valloss = 0.0
         self.count = 0
 
         self.grad_w = np.zeros(self.num_attributes)
@@ -442,7 +444,7 @@ cdef class FM_fast(object):
                        "learning_rate_schedule", "learning_rate",
                        "shuffle_training", "seed", "verbose", "reg_0",
                        "reg_w", "reg_v", "grad_w", "grad_v", "sumloss",
-                       "count"]
+                       "valloss", "count"]
 
         state = [field_names]
         for field in field_names:
