@@ -410,6 +410,9 @@ cdef class FM_fast(object):
         cdef DOUBLE sample_weight = 1.0
         cdef DOUBLE validation_sample_weight = 1.0
 
+        train_loss = []
+        val_loss = []
+
         for epoch in range(self.n_iter):
 
             if self.verbose > 0:
@@ -432,9 +435,15 @@ cdef class FM_fast(object):
                                              & validation_sample_weight)
                     self._sgd_lambda_step(validation_x_data_ptr, validation_x_ind_ptr,
                                           validation_xnnz, validation_y)
+            
+            train_loss.append(self.sumloss / self.count)
+            val_loss.append(self.valloss / self.count)
+
             if self.verbose > 0:
                 error_type = "MSE" if self.task == REGRESSION else "log loss"
                 print "Training %s: %.5f, validation %s: %.5f" % (error_type, (self.sumloss / self.count), error_type, (self.valloss / self.count))
+
+        return train_loss, val_loss
 
     def __getstate__(self):
         # Implements Pickle interface.
